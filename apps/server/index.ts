@@ -12,6 +12,8 @@ import hpp from "hpp";
 import "dotenv/config";
 import morgan from "morgan";
 import dotenv from "dotenv";
+import cacheClient from "./utils/redis";
+
 dotenv.config({ path: "../.env" });
 
 const app: Express = express();
@@ -134,6 +136,16 @@ app.use((req, res) => {
   });
 });
 
+cacheClient.createClient();
+cacheClient
+  .connectToClient()
+  .then(() => {
+    console.log("cache layer initialized");
+  })
+  .catch((err) => {
+    console.log(err);
+    console.log("Cache layer initialization failiure");
+  });
 app.listen(process.env.PORT || 8000, () => {
   console.log({
     message: "application started on port 8000",
